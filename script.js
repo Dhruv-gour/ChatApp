@@ -13,6 +13,7 @@ const displayUsername = document.getElementById('display-username');
 const editNameBtn = document.getElementById('edit-name');
 const startChatBtn = document.getElementById('start-chat');
 const shareRoomBtn = document.getElementById('share-room');
+const randomRoomBtn = document.getElementById('random-room');
 
 // State variables
 let currentUser = '';
@@ -46,6 +47,7 @@ function initApp() {
     editNameBtn.addEventListener('click', handleEditName);
     startChatBtn.addEventListener('click', handleStartChat);
     shareRoomBtn.addEventListener('click', handleShareRoom);
+    randomRoomBtn.addEventListener('click', handleRandomRoom);
 
     // Prevent double-tap zoom
     document.addEventListener('touchend', function(event) {
@@ -229,9 +231,9 @@ async function handleShareRoom() {
     }
 
     const shareData = {
-        title: 'Join QuickChat Room',
+        title: '💬 Hey! I am chatting on Quick Chat. Join my room now and lets talk!',
         text: `Join my QuickChat room: ${roomName}`,
-        url: window.location.href
+        url: 'https://play.google.com/store/apps/details?id=com.gmail.dhruvgour97.chatapp&pcampaignid=web_share'
     };
 
     try {
@@ -248,6 +250,39 @@ async function handleShareRoom() {
             alert('Sharing not supported on this device');
         }
     }
+}
+
+// Handle random room
+function handleRandomRoom() {
+    // Get all rooms
+    const roomsRef = database.ref('rooms');
+    
+    roomsRef.once('value', (snapshot) => {
+        const rooms = snapshot.val();
+        if (!rooms) {
+            alert('No active rooms found. Create a new room!');
+            return;
+        }
+
+        // Filter rooms with online users
+        const activeRooms = Object.entries(rooms)
+            .filter(([_, room]) => room.users && Object.keys(room.users).length > 0)
+            .map(([roomName]) => roomName);
+
+        if (activeRooms.length === 0) {
+            alert('No active rooms found. Create a new room!');
+            return;
+        }
+
+        // Select a random room
+        const randomRoom = activeRooms[Math.floor(Math.random() * activeRooms.length)];
+        
+        // Join the random room
+        currentRoom = randomRoom;
+        document.getElementById('current-room').textContent = randomRoom;
+        showChat();
+        setupRoomListeners();
+    });
 }
 
 // Initialize the app
