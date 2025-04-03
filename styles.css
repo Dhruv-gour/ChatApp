@@ -1,0 +1,560 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #0056b3;
+    --gradient-start: #ffffff;
+    --gradient-middle: #007bff;
+    --gradient-end: #0056b3;
+    --text-color: #333;
+    --light-text: #666;
+    --background-light: #f5f5f5;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --font-primary: 'Poppins', sans-serif;
+    --font-secondary: 'Roboto', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-primary);
+}
+
+body {
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-middle) 50%, var(--gradient-end) 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px var(--shadow-color);
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+.screen.active {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.container {
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.user-greeting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.user-name {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.edit-name-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.edit-name-btn:hover,
+.edit-name-btn:focus,
+.edit-name-btn:active {
+    transform: scale(1.1);
+    outline: none;
+}
+
+.app-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 25%;
+    margin-bottom: 1.5rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+h1, h2 {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+}
+
+.subtitle {
+    color: var(--light-text);
+    font-size: 1rem;
+    font-family: var(--font-secondary);
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: var(--background-light);
+    padding: 1.2rem;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    touch-action: manipulation;
+}
+
+.input-group:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.input-group i {
+    color: var(--primary-color);
+    margin-right: 12px;
+    font-size: 1.4rem;
+}
+
+input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    font-family: var(--font-secondary);
+    touch-action: manipulation;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Button Reset Styles */
+button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    outline: none !important;
+    touch-action: manipulation;
+}
+
+button:focus {
+    outline: none !important;
+}
+
+.gradient-btn {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 1.2rem 2rem;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.gradient-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none;
+}
+
+.gradient-btn:not(:disabled):hover, 
+.gradient-btn:not(:disabled):focus,
+.gradient-btn:not(:disabled):active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--shadow-color);
+    outline: none;
+}
+
+.gradient-btn i {
+    font-size: 1.3rem;
+}
+
+/* Chat Screen Styles */
+#chat-screen {
+    display: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 1.2rem;
+    background: var(--background-light);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    padding: 0.8rem;
+    margin-right: 1rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.back-button:hover,
+.back-button:focus,
+.back-button:active {
+    transform: translateX(-3px);
+    outline: none;
+}
+
+.room-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.room-title h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.room-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+    height: calc(100vh - 140px); /* Subtract header and input height */
+    min-height: 0; /* Important for Firefox */
+}
+
+.chat-input {
+    display: flex;
+    padding: 1.2rem;
+    background: var(--background-light);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    gap: 12px;
+    box-shadow: 0 -2px 8px var(--shadow-color);
+    touch-action: manipulation;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    font-size: 1rem;
+}
+
+.message {
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    max-width: 85%;
+    animation: slideIn 0.3s ease-out;
+    position: relative;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    touch-action: manipulation;
+}
+
+.message.sent {
+    margin-left: auto;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.message.received {
+    margin-right: auto;
+    background: var(--background-light);
+    color: var(--text-color);
+    border-bottom-left-radius: 5px;
+}
+
+.message .username {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+}
+
+.message .text {
+    word-wrap: break-word;
+    font-family: var(--font-secondary);
+    line-height: 1.4;
+}
+
+.message .timestamp {
+    font-size: 0.8rem;
+    color: var(--light-text);
+    margin-top: 0.3rem;
+    text-align: right;
+}
+
+.message.sent .timestamp {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.send-btn {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.send-btn:hover,
+.send-btn:focus,
+.send-btn:active {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    outline: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 600px) {
+    body {
+        padding: 0;
+    }
+
+    .screen {
+        height: 100vh;
+        border-radius: 0;
+        max-width: 100%;
+    }
+
+    .container {
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .app-logo {
+        width: 100px;
+        height: 100px;
+    }
+
+    .input-group {
+        padding: 1rem;
+    }
+
+    .gradient-btn {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .message {
+        max-width: 90%;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .chat-header {
+        padding: 1rem;
+    }
+
+    .chat-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .chat-input {
+        padding: 0.8rem;
+    }
+
+    .chat-input input {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .send-btn {
+        padding: 0.8rem;
+        font-size: 1.1rem;
+    }
+
+    .user-greeting {
+        font-size: 1.1rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .edit-name-btn {
+        padding: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    .chat-messages {
+        height: calc(100vh - 120px); /* Slightly smaller for mobile */
+        padding: 0.8rem;
+    }
+
+    .share-btn {
+        padding: 0.4rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #ffffff;
+        --light-text: #cccccc;
+        --background-light: #2a2a2a;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .screen {
+        background: rgba(42, 42, 42, 0.95);
+    }
+
+    .message.received {
+        background: #3a3a3a;
+    }
+
+    .chat-input input {
+        background: #3a3a3a;
+        color: var(--text-color);
+    }
+
+    .chat-messages {
+        background: rgba(42, 42, 42, 0.5);
+    }
+}
+
+.share-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.share-btn:hover,
+.share-btn:focus,
+.share-btn:active {
+    transform: scale(1.1);
+    outline: none;
+} 

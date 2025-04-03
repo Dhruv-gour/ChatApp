@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Real-Time Chat App</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <!-- Entry Screen -->
+    <div id="user-entry" class="screen active">
+        <div class="container">
+            <div class="app-header">
+                <img src="img/logo_withoutbg.png" alt="app logo" class="app-logo">
+                <h1>Welcome to QuickChat</h1>
+                <p class="subtitle">Connect with friends in real-time</p>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-user-circle"></i>
+                <input type="text" id="username" placeholder="Enter your name" required>
+            </div>
+            <button id="start-chat" class="gradient-btn">
+                <i class="fas fa-comments"></i>
+                Start Chatting
+            </button>
+        </div>
+    </div>
+
+    <!-- Room Selection Screen -->
+    <div id="room-selection" class="screen">
+        <div class="container">
+            <div class="app-header">
+                <div class="user-greeting">
+                    <span>Hey</span>
+                    <span class="user-name" id="display-username"></span>
+                    <button class="edit-name-btn" id="edit-name">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                </div>
+                <h2>Choose a Chat Room</h2>
+                <p class="subtitle">Join existing or create a new room</p>
+            </div>
+            <div class="room-options">
+                <div class="input-group">
+                    <i class="fas fa-door-open"></i>
+                    <input type="text" id="room-name" placeholder="Enter room name">
+                    <button id="share-room" class="share-btn" title="Share Room">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+                <div class="button-group">
+                    <button id="join-room" class="gradient-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Join Room
+                    </button>
+                    <button id="create-room" class="gradient-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        Create Room
+                    </button>
+                    <button id="random-room" class="gradient-btn">
+                        <i class="fas fa-random"></i>
+                        Random Room
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-header">
+            <button id="back-to-rooms" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="room-title">
+                <h2 id="current-room">Room Name</h2>
+                <div class="room-info">
+                    <i class="fas fa-users"></i>
+                    <span id="online-count">0</span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-messages" id="messages"></div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-message" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
