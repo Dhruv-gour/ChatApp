@@ -225,15 +225,10 @@ function sendMessage() {
 // Handle share room
 async function handleShareRoom() {
     const roomName = roomNameInput.value.trim();
-    if (!roomName) {
-        alert('Please enter a room name to share');
-        return;
-    }
-
     const shareData = {
         title: '💬 Hey! I am chatting on Quick Chat. Join my room now and lets talk!',
-        text: `Join my QuickChat room: ${roomName}`,
-        url: 'https://play.google.com/store/apps/details?id=com.gmail.dhruvgour97.chatapp&pcampaignid=web_share'
+        text: roomName ? `Join my QuickChat room: ${roomName}` : 'Join me on Quick Chat!',
+        url: 'https://play.google.com/store/apps/details?id=com.gmail.dhruvgour97.electricity&pcampaignid=web_share'
     };
 
     try {
@@ -241,16 +236,29 @@ async function handleShareRoom() {
             await navigator.share(shareData);
         } else {
             // Fallback for browsers that don't support Web Share API
-            const shareUrl = `${window.location.origin}?room=${encodeURIComponent(roomName)}`;
-            await navigator.clipboard.writeText(shareUrl);
-            alert('Room link copied to clipboard!');
+            const shareUrl = roomName ? 
+                `${window.location.origin}?room=${encodeURIComponent(roomName)}` : 
+                window.location.origin;
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                // Only show alert if clipboard API is available
+                alert('Room link copied to clipboard!');
+            } else {
+                // If clipboard API is not available, just share the URL directly
+                window.open(shareUrl, '_blank');
+            }
         }
     } catch (error) {
         if (error.name !== 'AbortError') {
-            alert('Sharing not supported on this device');
+            // If sharing fails, try to open the URL directly
+            const shareUrl = roomName ? 
+                `${window.location.origin}?room=${encodeURIComponent(roomName)}` : 
+                window.location.origin;
+            window.open(shareUrl, '_blank');
         }
     }
-}
+} 
 
 // Handle random room
 function handleRandomRoom() {
