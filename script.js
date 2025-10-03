@@ -39,7 +39,7 @@ let usersRef = null;
 // OpenRouter config (mirrors openrouter-test.html behavior)
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 // const OPENROUTER_API_KEY = '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';
-const OPENROUTER_MODEL = 'x-ai/grok-4-fast:free';
+const OPENROUTER_MODEL = 'openai/gpt-oss-20b:free';
 
 async function getAIResponse(prompt) {
     try {
@@ -449,3 +449,4 @@ function handleRandomRoom() {
 
 // Initialize the app
 initApp(); 
+
