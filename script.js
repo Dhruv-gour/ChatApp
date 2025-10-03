@@ -2,6 +2,7 @@
 const userEntryScreen = document.getElementById('user-entry');
 const roomSelectionScreen = document.getElementById('room-selection');
 const chatScreen = document.getElementById('chat-screen');
+const aiChatScreen = document.getElementById('ai-chat-screen');
 const usernameInput = document.getElementById('username');
 const roomNameInput = document.getElementById('room-name');
 const joinRoomBtn = document.getElementById('join-room');
@@ -14,6 +15,19 @@ const editNameBtn = document.getElementById('edit-name');
 const startChatBtn = document.getElementById('start-chat');
 const shareRoomBtn = document.getElementById('share-room');
 const randomRoomBtn = document.getElementById('random-room');
+// Bottom nav
+const navHomeBtn = document.getElementById('nav-home');
+const navAiBtn = document.getElementById('nav-ai');
+// AI chat inputs
+const aiMessageInput = document.getElementById('ai-message-input');
+const aiSendButton = document.getElementById('ai-send-message');
+const aiMessages = document.getElementById('ai-messages');
+const backAiButton = document.getElementById('back-to-rooms-ai');
+
+// Popup elements
+const popupEl = document.getElementById('popup');
+const popupMessageEl = popupEl ? popupEl.querySelector('.popup-content p') : null;
+const closePopupBtn = document.getElementById('closePopup');
 
 // State variables
 let currentUser = '';
@@ -21,6 +35,47 @@ let currentRoom = '';
 let lastTap = 0;
 let messagesRef = null;
 let usersRef = null;
+
+// OpenRouter config (mirrors openrouter-test.html behavior)
+const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_API_KEY = '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';
+const OPENROUTER_MODEL = 'x-ai/grok-4-fast:free';
+
+async function getAIResponse(prompt) {
+    try {
+        const res = await fetch(OPENROUTER_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
+                'Content-Type': 'application/json',
+                'X-Title': 'QuickChat'
+            },
+            body: JSON.stringify({
+                model: OPENROUTER_MODEL,
+                messages: [
+                    { role: 'user', content: [{ type: 'text', text: prompt }] }
+                ]
+            })
+        });
+        if (!res.ok) {
+            const t = await res.text();
+            throw new Error('HTTP ' + res.status + ' - ' + t);
+        }
+        const data = await res.json();
+        let reply = '';
+        if (data.choices && data.choices.length) {
+            const choice = data.choices[0];
+            const c = (choice.message && choice.message.content) ?? choice.content;
+            if (Array.isArray(c)) reply = c.map(b => b.text || '').join('\n\n');
+            else if (typeof c === 'string') reply = c;
+            else reply = JSON.stringify(c || {});
+        }
+        return reply || '[No response]';
+    } catch (err) {
+        console.error('OpenRouter error:', err);
+        return 'Sorry, there was an error getting a response.';
+    }
+}
 
 // Initialize app
 function initApp() {
@@ -48,6 +103,17 @@ function initApp() {
     startChatBtn.addEventListener('click', handleStartChat);
     shareRoomBtn.addEventListener('click', handleShareRoom);
     randomRoomBtn.addEventListener('click', handleRandomRoom);
+    if (navHomeBtn && navAiBtn) {
+        navHomeBtn.addEventListener('click', () => setBottomNav('home'));
+        navAiBtn.addEventListener('click', () => setBottomNav('ai'));
+    }
+    if (backAiButton) {
+        backAiButton.addEventListener('click', handleBackFromAi);
+    }
+    if (aiSendButton) {
+        aiSendButton.addEventListener('click', handleAiSend);
+        aiMessageInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ handleAiSend(); }});
+    }
 
     // Prevent double-tap zoom
     document.addEventListener('touchend', function(event) {
@@ -63,6 +129,30 @@ function initApp() {
     document.addEventListener('gesturestart', function(event) {
         event.preventDefault();
     });
+
+    // Popup events
+    if (closePopupBtn && popupEl) {
+        closePopupBtn.addEventListener('click', hidePopup);
+        popupEl.addEventListener('click', function(e){
+            if (e.target === popupEl) hidePopup();
+        });
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape' && !popupEl.classList.contains('hidden')) hidePopup();
+        });
+    }
+}
+
+// Show popup with message
+function showPopup(message) {
+    if (!popupEl || !popupMessageEl) return;
+    popupMessageEl.textContent = message;
+    popupEl.classList.remove('hidden');
+}
+
+// Hide popup
+function hidePopup() {
+    if (!popupEl) return;
+    popupEl.classList.add('hidden');
 }
 
 // Handle start chat button
@@ -177,6 +267,7 @@ function showUserEntry() {
     userEntryScreen.style.display = 'block';
     roomSelectionScreen.style.display = 'none';
     chatScreen.style.display = 'none';
+    if (aiChatScreen) aiChatScreen.style.display = 'none';
 }
 
 // Show room selection screen
@@ -184,7 +275,9 @@ function showRoomSelection() {
     userEntryScreen.style.display = 'none';
     roomSelectionScreen.style.display = 'block';
     chatScreen.style.display = 'none';
+    if (aiChatScreen) aiChatScreen.style.display = 'none';
     displayUsername.textContent = currentUser;
+    setBottomNav('home');
 }
 
 // Show chat screen
@@ -192,6 +285,66 @@ function showChat() {
     userEntryScreen.style.display = 'none';
     roomSelectionScreen.style.display = 'none';
     chatScreen.style.display = 'block';
+    if (aiChatScreen) aiChatScreen.style.display = 'none';
+}
+
+// Show AI chat screen
+function showAiChat() {
+    userEntryScreen.style.display = 'none';
+    roomSelectionScreen.style.display = 'none';
+    chatScreen.style.display = 'none';
+    if (aiChatScreen) aiChatScreen.style.display = 'block';
+}
+
+// Bottom nav selection
+function setBottomNav(target) {
+    if (!navHomeBtn || !navAiBtn) return;
+    if (target === 'home') {
+        navHomeBtn.classList.add('active');
+        navAiBtn.classList.remove('active');
+    } else if (target === 'ai') {
+        navAiBtn.classList.add('active');
+        navHomeBtn.classList.remove('active');
+        showAiChat();
+    }
+}
+
+// Back from AI to room selection
+function handleBackFromAi() {
+    showRoomSelection();
+}
+
+// AI send (OpenRouter-backed, mirrors openrouter-test.html)
+async function handleAiSend() {
+    const text = aiMessageInput.value.trim();
+    if (!text) return;
+
+    // Append user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'message sent';
+    userMsg.innerHTML = '<div class="username">You</div><div class="text">' + text + '</div><div class="timestamp">' + formatTime(Date.now()) + '</div>';
+    aiMessages.appendChild(userMsg);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+    aiMessageInput.value = '';
+
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'message received';
+    typing.innerHTML = '<div class="username">AI</div><div class="text">Typing...</div><div class="timestamp">' + formatTime(Date.now()) + '</div>';
+    aiMessages.appendChild(typing);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    aiSendButton.disabled = true;
+    try {
+        const reply = await getAIResponse(text);
+        typing.querySelector('.text').textContent = reply;
+        typing.querySelector('.timestamp').textContent = formatTime(Date.now());
+    } catch (e) {
+        typing.querySelector('.text').textContent = 'Sorry, there was an error getting a response.';
+    } finally {
+        aiSendButton.disabled = false;
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+    }
 }
 
 // Handle message key press
@@ -258,7 +411,7 @@ async function handleShareRoom() {
             window.open(shareUrl, '_blank');
         }
     }
-} 
+}
 
 // Handle random room
 function handleRandomRoom() {
@@ -268,7 +421,7 @@ function handleRandomRoom() {
     roomsRef.once('value', (snapshot) => {
         const rooms = snapshot.val();
         if (!rooms) {
-            alert('No active rooms found. Create a new room!');
+            showPopup('No active rooms found. Create a new room!');
             return;
         }
 
@@ -278,7 +431,7 @@ function handleRandomRoom() {
             .map(([roomName]) => roomName);
 
         if (activeRooms.length === 0) {
-            alert('No active rooms found. Create a new room!');
+            showPopup('No active rooms found. Create a new room!');
             return;
         }
 

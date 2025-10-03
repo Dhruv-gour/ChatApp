@@ -67,6 +67,17 @@
                 </div>
             </div>
         </div>
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="room-bottom-nav">
+            <button class="nav-btn active" id="nav-home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" id="nav-ai">
+                <i class="fas fa-robot"></i>
+                <span>AI</span>
+            </button>
+        </div>
     </div>
 
     <!-- Chat Screen -->
@@ -89,6 +100,37 @@
             <button id="send-message" class="send-btn">
                 <i class="fas fa-paper-plane"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- AI Chat Screen -->
+    <div id="ai-chat-screen" class="screen">
+        <div class="chat-header">
+            <button id="back-to-rooms-ai" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="room-title">
+                <h2>AI Assistant</h2>
+                <div class="room-info">
+                    <i class="fas fa-robot"></i>
+                    <span>AI</span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-messages" id="ai-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="ai-message-input" placeholder="Chat with AI...">
+            <button id="ai-send-message" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- In-app Popup Modal -->
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <p>No active rooms found. Create a new room!</p>
+            <button id="closePopup" class="gradient-btn">OK</button>
         </div>
     </div>
 
