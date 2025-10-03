@@ -38,29 +38,29 @@ let usersRef = null;
 
 // OpenRouter config (mirrors openrouter-test.html behavior)
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-// OPENROUTER_API_KEY
+// const OPENROUTER_API_KEY = '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';
 const OPENROUTER_MODEL = 'x-ai/grok-4-fast:free';
 
 async function getAIResponse(prompt) {
     try {
-        const res = await fetch(OPENROUTER_ENDPOINT, {
+        const res = await fetch('/.netlify/functions/openrouter-proxy', {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
-                'Content-Type': 'application/json',
-                'X-Title': 'QuickChat'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: OPENROUTER_MODEL,
                 messages: [
                     { role: 'user', content: [{ type: 'text', text: prompt }] }
-                ]
+                ],
+                model: OPENROUTER_MODEL
             })
         });
+
         if (!res.ok) {
             const t = await res.text();
             throw new Error('HTTP ' + res.status + ' - ' + t);
         }
+
         const data = await res.json();
         let reply = '';
         if (data.choices && data.choices.length) {
@@ -76,6 +76,7 @@ async function getAIResponse(prompt) {
         return 'Sorry, there was an error getting a response.';
     }
 }
+
 
 // Initialize app
 function initApp() {
@@ -448,4 +449,3 @@ function handleRandomRoom() {
 
 // Initialize the app
 initApp(); 
-
