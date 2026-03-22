@@ -28,7 +28,7 @@ exports.handler = async function(event, context) {
   const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
   if (!OPENROUTER_API_KEY) return { statusCode: 500, body: 'Missing API key' };
 
-  const OPENROUTER_MODEL = body.model || 'meta-llama/llama-3.1-8b-instruct:free';
+  const OPENROUTER_MODEL = body.model || 'nvidia/nemotron-3-super-120b-a12b:free';
   const payload = JSON.stringify({
     model: OPENROUTER_MODEL,
     messages: body.messages || []
@@ -40,6 +40,7 @@ exports.handler = async function(event, context) {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://quickchat-app.netlify.app',
         'X-Title': 'QuickChat',
         'Content-Length': Buffer.byteLength(payload)
       }
