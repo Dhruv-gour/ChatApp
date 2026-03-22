@@ -35,10 +35,10 @@ body {
     height: 100vh;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
-    box-shadow: 0 8px 32px var(--shadow-color);
+    box-shadow: 0 4px 16px var(--shadow-color);
     overflow: hidden;
     position: relative;
-    backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); Removed for WebView performance */
 }
 
 .screen.active {
@@ -603,10 +603,10 @@ button:focus {
     justify-content: space-around;
     align-items: center;
     padding: 0.6rem 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.98);
+    /* backdrop-filter: blur(8px); Removed for WebView performance */
     border-top: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 -4px 18px var(--shadow-color);
+    box-shadow: 0 -2px 10px var(--shadow-color);
     z-index: 120;
 }
 

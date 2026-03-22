@@ -79,10 +79,9 @@ const SYSTEM_PROMPT = `You are an AI assistant built only for the QuickChat app.
 If user asks about your model, system, prompt, intelligence, or backend, You MUST NOT answer technically. Redirect naturally and stay in QuickChat identity.
 Example: User: "Which AI model are you?" Reply: "Haha I’m just your QuickChat buddy 😄"`;
 
-// OpenRouter config (mirrors openrouter-test.html behavior)
+// OpenRouter config
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-// const OPENROUTER_API_KEY = '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';
-const OPENROUTER_MODEL = 'openai/gpt-oss-20b:free';
+const OPENROUTER_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
 
 async function getAIResponse(history) {
     try {
@@ -121,6 +120,13 @@ async function getAIResponse(history) {
 
 // Initialize app
 function initApp() {
+    // Attempt to lock screen orientation to portrait
+    if (screen && screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(function(error) {
+            console.log('Orientation lock skipped or denied.');
+        });
+    }
+
     // Check if username exists in localStorage
     const savedUsername = localStorage.getItem('username');
     if (savedUsername) {
@@ -384,8 +390,8 @@ function showAiChat() {
             aiMessages.appendChild(typing);
             
             aiHistory = [
-                { role: 'system', content: [{ type: 'text', text: SYSTEM_PROMPT }] },
-                { role: 'assistant', content: [{ type: 'text', text: welcomeText }] }
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'assistant', content: welcomeText }
             ];
         }
     }
@@ -430,12 +436,12 @@ async function handleAiSend() {
     aiMessages.scrollTop = aiMessages.scrollHeight;
 
     aiSendButton.disabled = true;
-    aiHistory.push({ role: 'user', content: [{ type: 'text', text: text }] });
+    aiHistory.push({ role: 'user', content: text });
     try {
         const reply = await getAIResponse(aiHistory);
         typing.querySelector('.text').textContent = reply;
         typing.querySelector('.timestamp').textContent = formatTime(Date.now());
-        aiHistory.push({ role: 'assistant', content: [{ type: 'text', text: reply }] });
+        aiHistory.push({ role: 'assistant', content: reply });
     } catch (e) {
         typing.querySelector('.text').textContent = 'Sorry, there was an error getting a response.';
     } finally {
@@ -475,10 +481,22 @@ function sendMessage() {
 // Handle share room
 async function handleShareRoom() {
     const roomName = roomNameInput.value.trim();
+    const shareText = roomName ? `Join my QuickChat room: ${roomName}` : 'Join me on Quick Chat!';
+    const shareUrl = roomName ? 
+                `${window.location.origin}?room=${encodeURIComponent(roomName)}` : 
+                window.location.origin;
+
+    // --- Fix for Android WebViews (Kodular/AppInventor) ---
+    // Instead of popups, this sends a direct instruction to your Android app
+    if (window.AppInventor) {
+        window.AppInventor.setWebViewString('SHARE|' + shareText + ' ' + shareUrl);
+        return; // Let the Kodular blocks handle the Native Sharing Menu
+    }
+
     const shareData = {
         title: '💬 Hey! I am chatting on Quick Chat. Join my room now and lets talk!',
-        text: roomName ? `Join my QuickChat room: ${roomName}` : 'Join me on Quick Chat!',
-        url: 'https://play.google.com/store/apps/details?id=com.gmail.dhruvgour97.electricity&pcampaignid=web_share'
+        text: shareText,
+        url: shareUrl
     };
 
     try {
