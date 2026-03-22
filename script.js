@@ -481,50 +481,37 @@ function sendMessage() {
 // Handle share room
 async function handleShareRoom() {
     const roomName = roomNameInput.value.trim();
-    const shareText = roomName ? `Join my QuickChat room: ${roomName}` : 'Join me on Quick Chat!';
-    const shareUrl = roomName ? 
-                `${window.location.origin}?room=${encodeURIComponent(roomName)}` : 
-                window.location.origin;
+    const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.gmail.dhruvgour97.electricity&pcampaignid=web_share';
+    
+    // Create the exact message
+    const shareText = roomName 
+        ? `Join my QuickChat room: ${roomName}\n\nDownload the app from the Play Store if you haven't yet:\n${playStoreUrl}` 
+        : `Join me on Quick Chat!\n\nDownload the app from the Play Store here:\n${playStoreUrl}`;
 
     // --- Fix for Android WebViews (Kodular/AppInventor) ---
     // Instead of popups, this sends a direct instruction to your Android app
     if (window.AppInventor) {
-        window.AppInventor.setWebViewString('SHARE|' + shareText + ' ' + shareUrl);
+        window.AppInventor.setWebViewString('SHARE|' + shareText);
         return; // Let the Kodular blocks handle the Native Sharing Menu
     }
 
     const shareData = {
-        title: '💬 Hey! I am chatting on Quick Chat. Join my room now and lets talk!',
-        text: shareText,
-        url: shareUrl
+        title: '💬 Hey! I am chatting on Quick Chat. Join my room now!',
+        text: shareText
     };
 
     try {
         if (navigator.share) {
             await navigator.share(shareData);
         } else {
-            // Fallback for browsers that don't support Web Share API
-            const shareUrl = roomName ? 
-                `${window.location.origin}?room=${encodeURIComponent(roomName)}` : 
-                window.location.origin;
-            
+            // Fallback for desktop browsers without Share API
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                await navigator.clipboard.writeText(shareUrl);
-                // Only show alert if clipboard API is available
-                alert('Room link copied to clipboard!');
-            } else {
-                // If clipboard API is not available, just share the URL directly
-                window.open(shareUrl, '_blank');
+                await navigator.clipboard.writeText(shareText);
+                // Alert popup has been completely removed!
             }
         }
     } catch (error) {
-        if (error.name !== 'AbortError') {
-            // If sharing fails, try to open the URL directly
-            const shareUrl = roomName ? 
-                `${window.location.origin}?room=${encodeURIComponent(roomName)}` : 
-                window.location.origin;
-            window.open(shareUrl, '_blank');
-        }
+        // Ignored. User might have cancelled share menu, which is normal.
     }
 }
 
