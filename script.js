@@ -82,7 +82,7 @@ Example: User: "Which AI model are you?" Reply: "Haha I’m just your QuickChat 
 
 // OpenRouter config
 const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-const OPENROUTER_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+const OPENROUTER_MODEL = 'nvidia/nemotron-3-super-120b-a12b:free';
 
 async function getAIResponse(history) {
     try {
@@ -114,7 +114,7 @@ async function getAIResponse(history) {
         return reply || '[No response]';
     } catch (err) {
         console.error('OpenRouter error:', err);
-        return 'Sorry, there was an error getting a response.';
+        return 'Error: ' + err.message;
     }
 }
 
