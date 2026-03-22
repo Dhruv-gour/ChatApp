@@ -40,6 +40,7 @@ let messagesRef = null;
 let usersRef = null;
 let aiHistory = [];
 let aiChatInitialized = false;
+let chatHistoryPushed = false;
 
 const SYSTEM_PROMPT = `You are an AI assistant built only for the QuickChat app. You exist to chat with users in a natural, human-like, friendly way.
 
@@ -195,6 +196,23 @@ function initApp() {
         event.preventDefault();
     });
 
+    // Handle mobile back button
+    window.addEventListener('popstate', (e) => {
+        if (chatHistoryPushed) {
+            chatHistoryPushed = false;
+            // Clean up room
+            if (currentRoom) {
+                if (messagesRef) {
+                    database.ref(`rooms/${currentRoom}/users/${currentUser}`).remove();
+                    messagesRef.off();
+                    if (usersRef) usersRef.off();
+                }
+                currentRoom = '';
+            }
+            showRoomSelection();
+        }
+    });
+
     // Popup events
     if (closePopupBtn && popupEl) {
         closePopupBtn.addEventListener('click', hidePopup);
@@ -327,18 +345,23 @@ function formatTime(timestamp) {
 
 // Handle back button
 function handleBack() {
-    if (currentRoom) {
-        // Remove user from room
-        if (messagesRef) {
-            database.ref(`rooms/${currentRoom}/users/${currentUser}`).remove();
-            messagesRef.off();
-            if (usersRef) {
-                usersRef.off();
-            }
-        }
-        showRoomSelection();
+    if (chatHistoryPushed) {
+        history.back();
     } else {
-        showUserEntry();
+        if (currentRoom) {
+            // Remove user from room
+            if (messagesRef) {
+                database.ref(`rooms/${currentRoom}/users/${currentUser}`).remove();
+                messagesRef.off();
+                if (usersRef) {
+                    usersRef.off();
+                }
+            }
+            currentRoom = '';
+            showRoomSelection();
+        } else {
+            showUserEntry();
+        }
     }
 }
 
@@ -371,6 +394,11 @@ function showChat() {
     roomSelectionScreen.style.display = 'none';
     chatScreen.style.display = 'block';
     if (aiChatScreen) aiChatScreen.style.display = 'none';
+    
+    if (!chatHistoryPushed) {
+        history.pushState({ chatActive: true }, '');
+        chatHistoryPushed = true;
+    }
 }
 
 // Show AI chat screen
@@ -395,6 +423,11 @@ function showAiChat() {
             ];
         }
     }
+    
+    if (!chatHistoryPushed) {
+        history.pushState({ chatActive: true }, '');
+        chatHistoryPushed = true;
+    }
 }
 
 // Bottom nav selection
@@ -412,7 +445,11 @@ function setBottomNav(target) {
 
 // Back from AI to room selection
 function handleBackFromAi() {
-    showRoomSelection();
+    if (chatHistoryPushed) {
+        history.back();
+    } else {
+        showRoomSelection();
+    }
 }
 
 // AI send (OpenRouter-backed, mirrors openrouter-test.html)

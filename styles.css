@@ -17,6 +17,17 @@
     padding: 0;
     box-sizing: border-box;
     font-family: var(--font-primary);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
 }
 
 body {
@@ -640,6 +651,16 @@ button:focus {
 /* Ensure room selection container leaves space for sticky nav visually */
 #room-selection .container {
     padding-bottom: 4.5rem;
+}
+
+@media (max-height: 600px) {
+    #room-selection {
+        overflow-y: auto;
+    }
+    #room-selection .container {
+        justify-content: flex-start;
+        padding-top: 90px;
+    }
 }
 
 /* In-app Popup Modal */
