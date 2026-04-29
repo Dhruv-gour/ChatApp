@@ -380,14 +380,16 @@ button:focus {
 }
 
 .message {
-    margin-bottom: 1rem;
-    padding: 1rem 1.5rem;
-    border-radius: 15px;
-    max-width: 85%;
+    margin-bottom: 0.75rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 18px;
+    max-width: 80%;
     animation: slideIn 0.3s ease-out;
     position: relative;
-    box-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow: 0 2px 5px var(--shadow-color);
     touch-action: manipulation;
+    display: flex;
+    flex-direction: column;
 }
 
 .message.sent {
@@ -406,21 +408,24 @@ button:focus {
 
 .message .username {
     font-weight: 600;
-    margin-bottom: 0.3rem;
-    font-size: 0.95rem;
+    margin-bottom: 0.15rem;
+    font-size: 0.8rem;
+    opacity: 0.9;
 }
 
 .message .text {
     word-wrap: break-word;
     font-family: var(--font-secondary);
-    line-height: 1.4;
+    line-height: 1.45;
+    font-size: 1.05rem;
 }
 
 .message .timestamp {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: var(--light-text);
-    margin-top: 0.3rem;
+    margin-top: 0.2rem;
     text-align: right;
+    opacity: 0.8;
 }
 
 .message.sent .timestamp {
@@ -529,8 +534,9 @@ button:focus {
     }
 
     .message {
-        max-width: 90%;
-        padding: 0.8rem 1.2rem;
+        max-width: 85%;
+        padding: 0.7rem 1rem;
+        margin-bottom: 0.6rem;
     }
 
     .chat-header {

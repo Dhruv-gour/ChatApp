@@ -414,7 +414,7 @@ function showAiChat() {
             
             const typing = document.createElement('div');
             typing.className = 'message received';
-            typing.innerHTML = '<div class="username">AI</div><div class="text">' + welcomeText + '</div><div class="timestamp">' + formatTime(Date.now()) + '</div>';
+            typing.innerHTML = '<div class="text">' + welcomeText + '</div>';
             aiMessages.appendChild(typing);
             
             aiHistory = [
@@ -460,7 +460,7 @@ async function handleAiSend() {
     // Append user message
     const userMsg = document.createElement('div');
     userMsg.className = 'message sent';
-    userMsg.innerHTML = '<div class="username">You</div><div class="text">' + text + '</div><div class="timestamp">' + formatTime(Date.now()) + '</div>';
+    userMsg.innerHTML = '<div class="text">' + text + '</div>';
     aiMessages.appendChild(userMsg);
     aiMessages.scrollTop = aiMessages.scrollHeight;
     aiMessageInput.value = '';
@@ -468,7 +468,7 @@ async function handleAiSend() {
     // Typing indicator
     const typing = document.createElement('div');
     typing.className = 'message received';
-    typing.innerHTML = '<div class="username">AI</div><div class="text">Typing...</div><div class="timestamp">' + formatTime(Date.now()) + '</div>';
+    typing.innerHTML = '<div class="text">Typing...</div>';
     aiMessages.appendChild(typing);
     aiMessages.scrollTop = aiMessages.scrollHeight;
 
@@ -477,7 +477,6 @@ async function handleAiSend() {
     try {
         const reply = await getAIResponse(aiHistory);
         typing.querySelector('.text').textContent = reply;
-        typing.querySelector('.timestamp').textContent = formatTime(Date.now());
         aiHistory.push({ role: 'assistant', content: reply });
     } catch (e) {
         typing.querySelector('.text').textContent = 'Sorry, there was an error getting a response.';
